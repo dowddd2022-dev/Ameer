@@ -1,89 +1,86 @@
-
 <!DOCTYPE html>
-<html lang="en" manifest="cache.appcache">
+<html lang="ar" dir="rtl" manifest="cache.appcache">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CROW 777</title>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #0b0d10;
-  color: #c8ced8;
-  font: 15px/1.45 "Segoe UI", system-ui, sans-serif;
-}
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #0b0d10;
+    color: #c8ced8;
+    font: 15px/1.45 "Segoe UI", Tahoma, system-ui, sans-serif;
+  }
 
-#wrap {
-  padding: 16px 18px;
-}
+  #wrap { padding: 16px 18px; }
 
-#state {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
+  #state {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
 
-#det {
-  font-size: 13px;
-  color: #8b95a3;
-  margin: 0 0 4px;
-}
+  #det {
+    font-size: 13px;
+    color: #8b95a3;
+    margin: 0 0 4px;
+  }
 
-#det b {
-  color: #c8ced8;
-  font-weight: 600;
-}
+  #det b {
+    color: #c8ced8;
+    font-weight: 600;
+  }
 
-#cache {
-  font-size: 12px;
-  color: #5c6672;
-  margin: 0 0 10px;
-  min-height: 14px;
-}
+  #cache {
+    font-size: 12px;
+    color: #5c6672;
+    margin: 0 0 10px;
+    min-height: 14px;
+  }
 
-#cache.cacheok { color: #7fd0a0; }
+  #cache.cacheok { color: #7fd0a0; }
 
-.ok { color: #7fd0a0; }
-.bad { color: #d08a7f; }
-.warn { color: #d8c07f; }
+  .ok { color: #7fd0a0; }
+  .bad { color: #d08a7f; }
+  .warn { color: #d8c07f; }
 
-/* CROW 777 LOGO */
-#brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px;
-  background: #0e1116;
-  border-bottom: 1px solid #1e2732;
-}
+  #brand {
+    text-align: center;
+    padding: 8px 10px;
+    background: #0e1116;
+    border-bottom: 1px solid #1e2732;
+  }
 
-#brand img {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-}
+  #brand img {
+    width: 28px;
+    height: 28px;
+    margin-left: 8px;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
 
-#brand b {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  color: #e6ebf2;
-}
+  #brand b {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    color: #e6ebf2;
+    vertical-align: middle;
+  }
 </style>
 </head>
 
 <body>
 
 <div id="brand">
-  <img src="crow-logo.png" alt="CROW 777">
+  <img src="data:image/png;base64,ضع_صورة_الشعار_الأصلية_هنا"
+       alt="" width="28" height="28">
   <b>CROW 777</b>
 </div>
 
 <div id="wrap">
-  <div id="state">detecting firmware...</div>
+  <div id="state">جارٍ اكتشاف إصدار النظام...</div>
   <div id="det"></div>
   <div id="cache"></div>
 </div>
@@ -107,6 +104,9 @@ html, body {
 
     var params = new URLSearchParams(location.search);
 
+    // إصدارات النظام التي تم اختبارها وقياس عناوين النواة الخاصة بها.
+    // يجب تحديث هذه القائمة بالتزامن مع ملف ps4_offsets.js.
+
     var SUPPORTED = {
         1302: 1,
         1304: 1,
@@ -114,12 +114,9 @@ html, body {
         1352: 1
     };
 
-    var key = null;
-    var fwnum = null;
+    var key = null, fwnum = null;
 
-    var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(
-        navigator.userAgent
-    );
+    var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
 
     if (m) {
         var ms = parseInt(m[2], 16).toString(16);
@@ -128,31 +125,29 @@ html, body {
 
         key = m[1] + "." + ms;
 
-        fwnum =
-            parseInt(m[1], 10) * 100 +
-            parseInt(ms, 10);
+        fwnum = parseInt(m[1], 10) * 100 + parseInt(ms, 10);
     }
 
     var forced = params.get("force") === "1";
 
-    var supported =
-        forced ||
+    var supported = forced ||
         (fwnum !== null && SUPPORTED[fwnum] === 1);
 
-    detEl.innerHTML =
-        "firmware <b>" + (key || "unknown") + "</b>" +
+    detEl.innerHTML = "إصدار النظام <b>" +
+        (key || "غير معروف") + "</b>" +
         (supported
-            ? " &middot; <b>supported</b>"
-            : " &middot; not in this build's kernel table");
+            ? " &middot; <b>مدعوم</b>"
+            : " &middot; غير موجود في جدول النواة لهذا الإصدار");
 
     var target = "jb.html" + location.search;
 
     function go() {
-        setState("loading...", "warn");
+        setState("جارٍ تحميل الجيلبريك...", "warn");
         location.replace(target);
     }
 
     function waitForTap(msg, action) {
+
         setState(msg, "warn");
 
         function fire() {
@@ -165,12 +160,16 @@ html, body {
         window.addEventListener("keydown", fire);
     }
 
+    // لا يتم تشغيل الإصدارات غير المدعومة تلقائياً.
+    // يمكن للمستخدم المتابعة بالنقر أو الضغط على زر X.
+
     if (!supported) {
-        setState("UNSUPPORTED FIRMWARE", "bad");
+
+        setState("إصدار النظام غير مدعوم", "bad");
 
         waitForTap(
-            "UNSUPPORTED (" + (key || "unknown") +
-            ") -- press X or tap to continue",
+            "إصدار غير مدعوم (" + (key || "غير معروف") +
+            ") — اضغط X أو انقر للمتابعة على مسؤوليتك",
             go
         );
 
@@ -180,16 +179,17 @@ html, body {
     var ac = window.applicationCache;
 
     if (!ac || !document.documentElement.hasAttribute("manifest")) {
+
         go();
 
     } else if (!navigator.onLine) {
 
-        setCache("offline -- from cache", true);
+        setCache("غير متصل بالإنترنت — جارٍ التشغيل من التخزين المؤقت", true);
         go();
 
     } else if (ac.status === ac.IDLE) {
 
-        setCache("cached", true);
+        setCache("الملفات محفوظة في التخزين المؤقت", true);
         go();
 
     } else if (ac.status === ac.UPDATEREADY) {
@@ -198,10 +198,10 @@ html, body {
             ac.swapCache();
         } catch (e) {}
 
-        setCache("update downloaded", true);
+        setCache("تم تنزيل التحديث", true);
 
         waitForTap(
-            "UPDATE READY -- press X or tap to reload",
+            "التحديث جاهز — اضغط X أو انقر لإعادة التحميل والتشغيل",
             function () {
                 location.reload();
             }
@@ -209,67 +209,78 @@ html, body {
 
     } else {
 
-        setCache("checking cache...");
+        setCache("جارٍ التحقق من التخزين المؤقت...");
 
         ac.addEventListener("downloading", function () {
-            setCache("caching for offline (first run)...");
+            setCache("جارٍ حفظ الملفات للعمل دون إنترنت (التشغيل الأول)...");
         }, false);
 
         ac.addEventListener("progress", function (e) {
+
             if (e && e.total) {
                 setCache(
-                    "caching " +
-                    Math.round((e.loaded / e.total) * 100) +
-                    "%"
+                    "جارٍ حفظ الملفات: " +
+                    Math.round((e.loaded / e.total) * 100) + "%"
                 );
             }
+
         }, false);
 
         ac.addEventListener("cached", function () {
-            setCache("cached for offline use", true);
+
+            setCache("تم حفظ الملفات للاستخدام دون إنترنت", true);
 
             waitForTap(
-                "CACHED (first run) -- press X or tap to continue",
+                "تم الحفظ (التشغيل الأول) — اضغط X أو انقر للتشغيل",
                 go
             );
+
         }, false);
 
         ac.addEventListener("updateready", function () {
+
             try {
                 ac.swapCache();
             } catch (e) {}
 
-            setCache("update downloaded", true);
+            setCache("تم تنزيل التحديث", true);
 
             waitForTap(
-                "UPDATE READY -- press X or tap to reload",
+                "التحديث جاهز — اضغط X أو انقر لإعادة التحميل والتشغيل",
                 function () {
                     location.reload();
                 }
             );
+
         }, false);
 
         ac.addEventListener("noupdate", function () {
-            setCache("cached -- offline ready", true);
+
+            setCache("الملفات محفوظة — جاهز للعمل دون إنترنت", true);
             go();
+
         }, false);
 
         ac.addEventListener("error", function () {
-            setCache("cache unavailable");
+
+            setCache("التخزين المؤقت غير متاح");
 
             waitForTap(
-                "CACHE FAILED -- press X or tap to continue",
+                "فشل التخزين المؤقت — اضغط X أو انقر للمتابعة",
                 go
             );
+
         }, false);
 
         ac.addEventListener("obsolete", function () {
-            setCache("cache obsolete");
+
+            setCache("التخزين المؤقت قديم");
 
             waitForTap(
-                "CACHE OBSOLETE -- press X or tap to continue",
+                "التخزين المؤقت قديم — اضغط X أو انقر للتشغيل",
                 go
             );
+
         }, false);
     }
 
